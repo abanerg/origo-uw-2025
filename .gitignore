@@ -7,3 +7,7 @@ proxy/local_storage/circuits/*.vk
 
 client/local_storage/circuits/*.pubwit
 client/local_storage/circuits/*.proof
+
+client/local_storage/*.json
+proxy/local_storage/*.txt
+proxy/local_storage/*.raw
