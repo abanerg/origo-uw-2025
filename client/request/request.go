@@ -33,8 +33,8 @@ type RequestData struct {
 
 func NewRequest() RequestTLS {
 	return RequestTLS{
-		ServerDomain:    "localhost",
-		ServerPath:      "/my-btc-usdt-order", // "testserver.origodata.io"
+		ServerDomain:    "api.github.com",
+		ServerPath:      "/", // "testserver.origodata.io"
 		ProxyURL:        "localhost:8082",
 		UrlPrivateParts: "",
 		AccessToken:     "",
