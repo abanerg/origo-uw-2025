@@ -8,6 +8,6 @@ proxy/local_storage/circuits/*.vk
 client/local_storage/circuits/*.pubwit
 client/local_storage/circuits/*.proof
 
-client/local_storage/*.json
+client/local_storage/session_params_13.json
 proxy/local_storage/*.txt
 proxy/local_storage/*.raw
