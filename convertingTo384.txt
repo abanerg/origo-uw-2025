@@ -1,0 +1,7 @@
+Main differences:
+
+
+SHA384 produces 48 byte hashes instead of 32 bytes; wherever we're seeing that 32 byte hashes are being produced, we should be careful to check whether we need to change that to be 48 bytes.
+
+AES-256 uses 32-byte keys vs. AES-128's 16-byte keys: Similarly, need to check where we might have keys hardcoded to be 16 bytes and change them as necessary.
+

@@ -10,4 +10,5 @@ client/local_storage/circuits/*.proof
 
 client/local_storage/session_params_13.json
 proxy/local_storage/*.txt
+proxy/local_storage/*.json
 proxy/local_storage/*.raw
