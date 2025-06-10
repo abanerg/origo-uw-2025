@@ -41,8 +41,9 @@ func CircuitAssign() (frontend.Circuit, frontend.Circuit, error) {
 	substringEnd, _ := strconv.Atoi(params["substring_end"])
 	valueStart, _ := strconv.Atoi(params["value_start"])
 	valueEnd, _ := strconv.Atoi(params["value_end"])
+
 	// !!! policy value !!!
-	threshold := 38001
+	threshold := 40
 
 	// kdc to bytes
 	byteSlice, _ := hex.DecodeString(params["intermediateHashHSopad"])

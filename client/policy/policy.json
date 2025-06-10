@@ -1,7 +1,7 @@
 {
-    "substring": "\"price\"",
+    "substring": "\"netid\":",
     "value_start_idx_after_ss": 3,
-    "value_length": 5,
-    "threshold_value": "30001",
+    "value_length": 1,
+    "threshold_value": "40",
     "value_constraint": "GT"
 }

@@ -24,6 +24,7 @@ func main() {
 	// checks for -request flag
 	request := flag.Bool("request", false, "send request to server.")
 
+	requestc := flag.Bool("requestc", false, "send request to server.")
 	// checks for handshake only -hsonly flag
 	hsonly := flag.Bool("hsonly", false, "establishes tcp tls session with server and returns.")
 
@@ -58,6 +59,21 @@ func main() {
 	if *request {
 		// optionally change to r.NewRequest(configs) for better config handling
 		req := r.NewRequest()
+		data, err := req.Call(*hsonly)
+		if err != nil {
+			log.Error().Msg("req.Call()")
+		}
+		if !*hsonly {
+			err = req.Store(data)
+			if err != nil {
+				log.Error().Msg("req.Store(data)")
+			}
+		}
+	}
+
+	if *requestc {
+		// READ COOKIE FROM SOMEWHERE?
+		req := r.NewRequestWithCookie(".eJwVwUmSgjAAAMAXWTUQkHiYQ8KmIChKALlQyCqIQRLW109Nd4X-YXpXhT0bCcFpOcU-AcvUDw9TXk7uO3V4UF4rqLEXEkYZqyrtlajbYWPI7ON91mPxsHxq2x78swyaLh_YG8ZSWpe0qIw2_1Kp1ZuZ1Q8yPWaWO7hQloF26BpefsIIaOdT_zzdRWVLZVHIs9ZSyOr5AYFebzp6dKjL3PsgXupzzQ8jTkLPlgy4ZK_uSK2MJuC7SK_B-pQdcSECmRjFVtKlQsBw5ChbOMrhlfKbJn8jvXIQxGtgi8-ikP33dGmawd1v6MJBi5m-aXYS7LwGOK6x99a2T9BzDQg3udmorDIn78YdC5LfP9BWagw:1uOyew:2UCivY_BpFHqWLrijTkFYQkR2GpNN9VWoHHCvKhR5pQ")
 		data, err := req.Call(*hsonly)
 		if err != nil {
 			log.Error().Msg("req.Call()")
@@ -131,7 +147,6 @@ func main() {
 		if err != nil {
 			log.Error().Msg("pp.ReadServerRecords")
 		}
-
 		// prints record data
 		// pp.ShowPlaintext(recordPerSequence)
 

@@ -5,6 +5,7 @@ import (
 	tls "client/tls_fork"
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"io"
 	"os"
 	"strconv"
@@ -24,6 +25,7 @@ type RequestTLS struct {
 	UrlPrivateParts string
 	AccessToken     string
 	StorageLocation string
+	Cookie          string
 }
 
 type RequestData struct {
@@ -33,12 +35,25 @@ type RequestData struct {
 
 func NewRequest() RequestTLS {
 	return RequestTLS{
-		ServerDomain:    "api.github.com",
-		ServerPath:      "/", // "testserver.origodata.io"
+		ServerDomain:    "identity.uw.edu",
+		ServerPath:      "/profile/api/profile/", // "testserver.origodata.io"
 		ProxyURL:        "localhost:8082",
 		UrlPrivateParts: "",
 		AccessToken:     "",
 		StorageLocation: "./local_storage/",
+		Cookie:          "",
+	}
+}
+
+func NewRequestWithCookie(c string) RequestTLS {
+	return RequestTLS{
+		ServerDomain:    "identity.uw.edu",
+		ServerPath:      "/profile/api/profile/", // "testserver.origodata.io"
+		ProxyURL:        "localhost:8082",
+		UrlPrivateParts: "",
+		AccessToken:     "",
+		StorageLocation: "./local_storage/",
+		Cookie:          c,
 	}
 }
 
@@ -78,8 +93,8 @@ func (r *RequestTLS) Call(hsOnly bool) (RequestData, error) {
 		PreferServerCipherSuites: false,
 		MinVersion:               tls.VersionTLS13,
 		MaxVersion:               tls.VersionTLS13,
-		CipherSuites: []uint16{
-			tls.TLS_AES_128_GCM_SHA256,
+		CipherSuites:             []uint16{
+			// tls.TLS_AES_128_GCM_SHA256,
 		},
 		ServerName: r.ServerDomain,
 	}
@@ -97,16 +112,28 @@ func (r *RequestTLS) Call(hsOnly bool) (RequestData, error) {
 		r.ServerDomain += ":8081"
 	}
 
+	fmt.Printf("#rq.go 101: %v\n", config.CipherSuites)
+
 	// measure start time
 	start := time.Now()
 
 	// tls connection
 	conn, err := tls.Dial("tcp", r.ProxyURL, config)
+	fmt.Printf("#rq.go 108: %v\n", config.CipherSuites)
 	if err != nil {
 		log.Error().Err(err).Msg("tls.Dial()")
 		return RequestData{}, err
 	}
 	defer conn.Close()
+	// Get connection state after handshake
+	state := conn.ConnectionState()
+	cipherSuiteName := tls.CipherSuiteName(state.CipherSuite)
+
+	log.Info().
+		Str("cipher_suite", cipherSuiteName).
+		Str("cipher_id", fmt.Sprintf("0x%04X", state.CipherSuite)).
+		Str("tls_version", fmt.Sprintf("0x%04X", state.Version)).
+		Msg("TLS connection established")
 
 	// tls handshake time
 	elapsed := time.Since(start)
@@ -135,6 +162,9 @@ func (r *RequestTLS) Call(hsOnly bool) (RequestData, error) {
 	request.Header.Set("Content-Type", "application/json")
 	if r.AccessToken != "" {
 		request.Header.Set("Authorization", "Bearer "+r.AccessToken)
+	}
+	if r.Cookie != "" {
+		request.Header.Set("Cookie", "identityuwsession="+r.Cookie)
 	}
 
 	// initialize connection buffers
